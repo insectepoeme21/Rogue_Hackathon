@@ -1,6 +1,7 @@
 import pygame as pg
 from random import randint
 from itertools import product
+from ctypes.wintypes import SIZE
 
 class Knight:
     def __init__(self, pos, HP=50, DMG=10, Ore = 10):
@@ -18,6 +19,8 @@ def move(player, direction):
     else:
         if new_pos not in walls and new_pos not in KNIGHT_DICT.keys():
             player.position = new_pos
+        if new_pos in BOSS_DICT.keys():
+            fight(player, BOSS_DICT[new_pos])
         if new_pos in KNIGHT_DICT.keys():
             fight(player, KNIGHT_DICT[new_pos])
         if new_pos in BAG_LIST:
@@ -60,7 +63,9 @@ def fight(player, knight):
         del KNIGHT_DICT[knight.pos]
 
 
-KNIGHT_DICT={(23,18) : Knight((23,18)), (12, 15) : Knight((12, 15)), (5, 5) : Knight((5, 5))}
+KNIGHT_DICT={(23,18) : Knight((23,18)), (12, 15) : Knight((12, 15))}
+BOSS_DICT = {(8, 26) : Knight((8, 26), HP = 200, DMG = 20)}
+tools = {}
 walls = []
 doors = []
 paths = []
@@ -101,11 +106,11 @@ def room(pt, lenX, lenY, door):
         doors.append(i)
         walls.remove(i)
     
-map = [[(2, 2), 9, 7, [(4, 8), (10, 6)]],
-       [(20, 6), 9, 5, [(25, 10)]],
+map = [[(2, 2), 9, 7, [(4, 8), (10, 5)]],
+       [(20, 6), 9, 5, [(25, 10),(20,8)]],
        [(8, 13), 8, 5, [(10, 17), (8, 15)]],
        [(3, 24), 10, 5, [(10, 24)]],
-       [(20, 15), 8, 10, [(25, 15), (20, 20)]]]    
+       [(20, 15), 8, 10, [(25, 15), (20, 20)]]]
 
 paths = [(4,9+i) for i in range(7)]
 for i in range(1,4):
@@ -122,6 +127,15 @@ for i in range(3):
     paths += [(15, 6+i)]
 for i in range(4):
     paths += [(16+i, 8)]
+
+sword = pg.image.load("sword.png")
+knight = pg.image.load("knight.png")
+coin = pg.image.load("coin.png")
+wood = pg.image.load("wood.png")
+boss = pg.image.load("boss.png")
+axe = pg.image.load("axe.png")
+digger = pg.image.load("mineur.png")
+brick = pg.image.load("wall.png")
 
 for i in map:
     room(*i)
@@ -155,8 +169,25 @@ while running:
         draw_rect(screen, *x, COTE, GRAY)
     for x in KNIGHT_DICT.keys():
         draw_rect(screen, *x, COTE, BLUE)
+    
 
     draw_rect(screen, *player.position, COTE, GREEN)
+
+    for x in KNIGHT_DICT.keys():
+        screen.blit(knight, (x[0]*COTE, x[1]*COTE))
+
+    for i, j in walls:
+        screen.blit(brick, (i*COTE, j*COTE))
+    for i, j in paths:
+        screen.blit(wood, (i*COTE, j*COTE))
+    for x in BOSS_DICT.keys():
+        screen.blit(boss, (x[0]*COTE, x[1]*COTE))
+
+
+    screen.blit(digger, (player.position[0]*COTE , player.position*COTE))
+
+
+
 
     pg.display.update()
     
