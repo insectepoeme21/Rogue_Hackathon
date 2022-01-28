@@ -87,6 +87,7 @@ walls = []
 doors = []
 paths = []
 player = Player((3, 3))
+VICTORY = False
 
 pg.init()
 COTE = 20 # largeur du rectangle en pixels
@@ -154,6 +155,7 @@ digger = pg.image.load("mineur.png")
 brick = pg.image.load("wall.png")
 dooor = pg.image.load("door.png")
 ladder = pg.image.load("ladder.png")
+cup = pg.image.load("cup.png")
 
 for i in map:
     room(*i)
@@ -162,72 +164,84 @@ for i in map:
 running = True
 while running:
     clock.tick(pace)
-    
-    for event in pg.event.get():
-        if event.type == pg.QUIT:
-            running = False
-        if event.type == pg.KEYDOWN:
-            if event.key == pg.K_s:
-                move(player, (0, 1))
-            if event.key == pg.K_z:
-                move(player, (0, -1))
-            if event.key == pg.K_q:
-                move(player, (-1, 0))
-            if event.key == pg.K_d:
-                    move(player, (1, 0))
-            if player.position == (4, 26) and event.key == pg.K_z:
-                pg.mixer.music.load("victory.mp3")
-                pg.mixer.music.play()
 
-
-    screen.fill(BLACK)
-    for x in doors:
-        screen.blit(dooor, (x[0]*COTE, x[1]*COTE))
-
-    for x in KNIGHT_DICT.keys():
-        screen.blit(knight, (x[0]*COTE, x[1]*COTE))
-
-    for i, j in walls:
-        screen.blit(brick, (i*COTE, j*COTE))
-    for i, j in paths:
-        screen.blit(wood, (i*COTE, j*COTE))
-    for x in BOSS_DICT.keys():
-        screen.blit(boss, (x[0]*COTE, x[1]*COTE))
-    for pos, value in tools.items():
-        if value[0] == "sword":
-            screen.blit(sword, (pos[0]*COTE +2, pos[1]*COTE +2))
-        elif value[0] == "axe":
-            screen.blit(axe, (pos[0]*COTE +2, pos[1]*COTE +2))
-    for x in BAG_LIST.keys():
-        screen.blit(coin, (x[0]*COTE +2, x[1]*COTE +2))
+    if not VICTORY:
     
 
-    screen.blit(ladder, (4*COTE +3, 26*COTE -3))
-
-    GOLD =  (255,215,0)
-
-    health_rect = pg.Rect(100, 31*COTE, max(2.5*player.health, 250), COTE)
-    damage_rect = pg.Rect(100 + 2.5*player.health,31*COTE, max(0, 250 - 2.5*player.health), COTE)
-    pg.draw.rect(screen, GREEN, health_rect)
-    pg.draw.rect(screen, RED, damage_rect)
-    wealth_rect = pg.Rect(150, 32*COTE, player.wealth, COTE)
-    pg.draw.rect(screen, GOLD, wealth_rect)
 
 
-    # Affichage du texte 
-    font_obj=pg.font.SysFont("Arial", 20)
+        screen.fill(BLACK)
+        for x in doors:
+            screen.blit(dooor, (x[0]*COTE, x[1]*COTE))
 
-    coin_txt = font_obj.render(f"Wealth: {player.wealth} coins", True, GOLD) 
-    health_txt = font_obj.render(f"Healthbar:", True, GREEN)
-    txt = font_obj.render(f"Your Character:", True, WHITE)
+        for x in KNIGHT_DICT.keys():
+            screen.blit(knight, (x[0]*COTE, x[1]*COTE))
 
-    screen.blit(coin_txt, (0, 32*COTE))
-    screen.blit(health_txt, (0,31*COTE))
-    screen.blit(txt, (0, 30*COTE - 5))
+        for i, j in walls:
+            screen.blit(brick, (i*COTE, j*COTE))
+        for i, j in paths:
+            screen.blit(wood, (i*COTE, j*COTE))
+        for x in BOSS_DICT.keys():
+            screen.blit(boss, (x[0]*COTE, x[1]*COTE))
+        for pos, value in tools.items():
+            if value[0] == "sword":
+                screen.blit(sword, (pos[0]*COTE +2, pos[1]*COTE +2))
+            elif value[0] == "axe":
+                screen.blit(axe, (pos[0]*COTE +2, pos[1]*COTE +2))
+        for x in BAG_LIST.keys():
+            screen.blit(coin, (x[0]*COTE +2, x[1]*COTE +2))
+        
 
-    pg.display.update()
+        screen.blit(ladder, (4*COTE +3, 26*COTE -3))
 
-    screen.blit(digger, (player.position[0]*COTE , (player.position[1]-0.5)*COTE))
+        GOLD =  (255,215,0)
+
+        health_rect = pg.Rect(100, 31*COTE, max(2.5*player.health, 250), COTE)
+        damage_rect = pg.Rect(100 + 2.5*player.health,31*COTE, max(0, 250 - 2.5*player.health), COTE)
+        pg.draw.rect(screen, GREEN, health_rect)
+        pg.draw.rect(screen, RED, damage_rect)
+        wealth_rect = pg.Rect(150, 32*COTE, player.wealth, COTE)
+        pg.draw.rect(screen, GOLD, wealth_rect)
+
+
+        # Affichage du texte 
+        font_obj=pg.font.SysFont("Arial", 20)
+
+        coin_txt = font_obj.render(f"Wealth: {player.wealth} coins", True, GOLD) 
+        health_txt = font_obj.render(f"Healthbar:", True, GREEN)
+        txt = font_obj.render(f"Your Character:", True, WHITE)
+
+        screen.blit(coin_txt, (0, 32*COTE))
+        screen.blit(health_txt, (0,31*COTE))
+        screen.blit(txt, (0, 30*COTE - 5))
+
+        pg.display.update()
+
+        screen.blit(digger, (player.position[0]*COTE , (player.position[1]-0.5)*COTE))
+
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
+                running = False
+            if event.type == pg.KEYDOWN:
+                if event.key == pg.K_s:
+                    move(player, (0, 1))
+                if event.key == pg.K_z:
+                    move(player, (0, -1))
+                if event.key == pg.K_q:
+                    move(player, (-1, 0))
+                if event.key == pg.K_d:
+                        move(player, (1, 0))
+                if player.position == (4, 26) and event.key == pg.K_z:
+                    pg.mixer.music.load("victory.mp3")
+                    pg.mixer.music.play()
+                    VICTORY = True
+            
+    if VICTORY:
+        screen.blit(cup, (180, 200))
+        font_obj=pg.font.SysFont("Bauhaus 93", 40)
+        txt = font_obj.render("VICTORY", True, GOLD)
+        screen.blit(txt, (13*COTE, 24*COTE))
+
 
 
 
