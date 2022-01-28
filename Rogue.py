@@ -6,7 +6,7 @@ from random import randint
 from itertools import product
 
 
-KNIGHT_LIST=
+"""KNIGHT_LIST=
 KNIGHT_POS={}
 
 class Knight:
@@ -17,10 +17,10 @@ class Knight:
         self.wealth = Ore
 
 def move(player, direction):
-    if player.pos + direction not in wall:
+    if player.pos + direction not in walls:
         player.pos += direction
     if player.pos + direction in KNIGHT_POS.keys():
-        fight(player, KNIGHT_POS[player.pos + direction])
+        fight(player, KNIGHT_POS[player.pos + direction])"""
 
 
 
@@ -38,14 +38,33 @@ BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 BLUE = (0, 0, 255)
 
-wall = []
+walls = []
+doors = []
 
 def draw_rect(screen, x, y, size, color):
     rect = pg.Rect(x*size, y*size, size, size)
     pg.draw.rect(screen, color, rect)
 
-def room(pt, length, width):
-    pass
+
+
+def room(pt, lenX, lenY, door):
+    for i in range(lenX):
+        walls.append((pt[0]+i, pt[1]))
+        walls.append((pt[0]+i, pt[1]+lenY-1))
+    for i in range(1, lenY-1):
+        walls.append((pt[0], pt[1]+i))
+        walls.append((pt[0]+lenX-1, pt[1]+i))
+    
+    for i in door:
+        doors.append(i)
+        walls.remove(i)
+    
+map = [[(2, 2), 9, 7, [(4, 8), (10, 6)]],
+       [(20, 6), 9, 5, [(25, 10)]],
+       [(8, 13), 8, 5, [(10, 17), (8, 15)]],
+       [(3, 24), 10, 5, [(10, 24)]],
+       [(20, 15), 8, 10, [(25, 15), (20, 20)]]]    
+
 
 running = True
 while running:
@@ -61,6 +80,9 @@ while running:
         if event.type == pg.K_d:
             move(player, (20, 0))
 
+    for i in map:
+        room(*i)
+    
 
         
 
@@ -76,7 +98,10 @@ while running:
 
 
     screen.fill(BLACK)
-    draw_rect(screen, 0, 1, COTE, WHITE)
+    for x, y in walls:
+        draw_rect(screen, x, y, COTE, WHITE)
+    for x in doors:
+        draw_rect(screen, *x , COTE, RED)
 
     pg.display.update()
     
