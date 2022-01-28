@@ -56,6 +56,44 @@ def draw_rect(screen, x, y, size, color):
 def room(pt, length, width):
     pass
 
+import pygame as py 
+import random as rd
+
+
+
+class game_set:
+    def __init__(self, ):
+        """
+        Attributes est un dictionaire contenant toutes les variables du jeu
+        """
+        self.player = 
+        self.Knights = 
+
+
+
+class Player:
+    def __init__(self, position, health, weapon, wealth, armour):
+        """
+        poistion : la position du joueur exprimé paer une liste de longueur 2
+        health : la santé du joueur exprimé en pourcentage (mais peut être supérieur à 100
+        weapon : une liste avec l'arme du joueur et son dégat 
+            ex: weapon = ["sword", 40]
+        wealth : le nombre de pièce d'or du personnage
+        """
+        self.position = position 
+        self.health = health
+        self.weapon = weapon 
+        self.wealth = wealth 
+        self.armour = armour 
+
+
+    def enrichement(self, coin_bags):
+        wealth = self.wealth
+        self.wealth = wealth + coin_bags 
+        
+
+
+
 running = True
 while running:
     clock.tick(pace)
