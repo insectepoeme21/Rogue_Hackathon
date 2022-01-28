@@ -20,8 +20,8 @@ def move(player, direction):
     if player.pos + direction not in walls:
         player.pos += direction
     if player.pos + direction in KNIGHT_POS.keys():
-        fight(player, KNIGHT_POS[player.pos + direction])"""
-
+        fight(player, KNIGHT_POS[player.pos + direction])
+"""
 
 
 
@@ -37,13 +37,16 @@ WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 BLUE = (0, 0, 255)
+GRAY = (150, 150, 150)
 
 walls = []
 doors = []
+paths = []
 
 def draw_rect(screen, x, y, size, color):
     rect = pg.Rect(x*size, y*size, size, size)
     pg.draw.rect(screen, color, rect)
+
 
 
 
@@ -60,47 +63,26 @@ def room(pt, lenX, lenY, door):
         walls.remove(i)
     
 map = [[(2, 2), 9, 7, [(4, 8), (10, 6)]],
-       [(20, 6), 9, 5, [(25, 10)]],
+       [(20, 6), 9, 5, [(25, 10),(20,8)]],
        [(8, 13), 8, 5, [(10, 17), (8, 15)]],
        [(3, 24), 10, 5, [(10, 24)]],
-       [(20, 15), 8, 10, [(25, 15), (20, 20)]]]    
+       [(20, 15), 8, 10, [(25, 15), (20, 20)]]]
 
-
-import pygame as py 
-import random as rd
-
-
-
-class game_set:
-    def __init__(self, ):
-        """
-        Attributes est un dictionaire contenant toutes les variables du jeu
-        """
-        self.player = 
-        self.Knights = 
-
-
-
-class Player:
-    def __init__(self, position, health, weapon, wealth, armour):
-        """
-        poistion : la position du joueur exprimé paer une liste de longueur 2
-        health : la santé du joueur exprimé en pourcentage (mais peut être supérieur à 100
-        weapon : une liste avec l'arme du joueur et son dégat 
-            ex: weapon = ["sword", 40]
-        wealth : le nombre de pièce d'or du personnage
-        """
-        self.position = position 
-        self.health = health
-        self.weapon = weapon 
-        self.wealth = wealth 
-        self.armour = armour 
-
-
-    def enrichement(self, coin_bags):
-        wealth = self.wealth
-        self.wealth = wealth + coin_bags 
-        
+paths = [(4,9+i) for i in range(7)]
+for i in range(1,4):
+    paths += [(4+i, 15)]
+for i in range(6):
+    paths += [(10, 18+i)]
+for i in range(10):
+    paths += [(10+i, 20)]
+for i in range(4):
+    paths += [(25, 11+i)]
+for i in range(5):
+    paths += [(11+i, 5)]
+for i in range(3):
+    paths += [(15, 6+i)]
+for i in range(4):
+    paths += [(16+i, 8)]
 
 
 
@@ -140,6 +122,8 @@ while running:
         draw_rect(screen, x, y, COTE, WHITE)
     for x in doors:
         draw_rect(screen, *x , COTE, RED)
+    for x in paths:
+        draw_rect(screen, *x, COTE, GRAY)
 
     pg.display.update()
     
