@@ -1,6 +1,7 @@
 # v1 : pareil mais au moins on peut sortir du programme
 # avec la touche 'q', ou avec la souris en fermant la fenêtre
 
+from ctypes.wintypes import SIZE
 import pygame as pg
 from random import randint
 from itertools import product
@@ -27,7 +28,7 @@ def move(player, direction):
 
 pg.init()
 COTE = 20 # largeur du rectangle en pixels
-NB_CASES = 30
+NB_CASES = 33
 screen = pg.display.set_mode((COTE*NB_CASES, COTE*NB_CASES))
 clock = pg.time.Clock()
 pace = 2
@@ -62,7 +63,7 @@ def room(pt, lenX, lenY, door):
         doors.append(i)
         walls.remove(i)
     
-map = [[(2, 2), 9, 7, [(4, 8), (10, 6)]],
+map = [[(2, 2), 9, 7, [(4, 8), (10, 5)]],
        [(20, 6), 9, 5, [(25, 10),(20,8)]],
        [(8, 13), 8, 5, [(10, 17), (8, 15)]],
        [(3, 24), 10, 5, [(10, 24)]],
@@ -84,7 +85,17 @@ for i in range(3):
 for i in range(4):
     paths += [(16+i, 8)]
 
+sword = pg.image.load("sword.png")
+knight = pg.image.load("knight.png")
+coin = pg.image.load("coin.png")
+wood = pg.image.load("wood.png")
+boss = pg.image.load("boss.png")
+axe = pg.image.load("axe.png")
+digger = pg.image.load("mineur.png")
+brick = pg.image.load("wall.png")
 
+for i in map:
+    room(*i)
 
 running = True
 while running:
@@ -100,11 +111,10 @@ while running:
         if event.type == pg.K_d:
             move(player, (20, 0))
 
-    for i in map:
-        room(*i)
+    
     
 
-        
+     
 
 
     for event in pg.event.get():
@@ -122,8 +132,27 @@ while running:
         draw_rect(screen, x, y, COTE, WHITE)
     for x in doors:
         draw_rect(screen, *x , COTE, RED)
-    for x in paths:
-        draw_rect(screen, *x, COTE, GRAY)
+    """for x in paths:
+        draw_rect(screen, *x, COTE, GRAY)"""
+
+    screen.blit(knight, (23*COTE, 8*COTE))
+    screen.blit(knight, (12*COTE, 15*COTE))
+
+    for i, j in walls:
+        screen.blit(brick, (i*COTE, j*COTE))
+    for i, j in paths:
+        screen.blit(wood, (i*COTE, j*COTE))
+    screen.blit(boss, (8*COTE, 26*COTE))
+    screen.blit(sword, (paths[2][0]*COTE +2, paths[2][1]*COTE +2))
+    screen.blit(axe, (paths[35][0]*COTE +2, paths[35][1]*COTE +2))
+    screen.blit(coin, (paths[13][0]*COTE +2, paths[13][1]*COTE +2))
+    screen.blit(coin, (paths[20][0]*COTE +2, paths[20][1]*COTE +2))
+    screen.blit(coin, (paths[21][0]*COTE +2, paths[21][1]*COTE +2))
+    screen.blit(coin, (paths[19][0]*COTE +2, paths[19][1]*COTE +2))
+
+    screen.blit(digger, (paths[17][0]*COTE , (paths[17][1]-0.5)*COTE))
+
+    
 
     pg.display.update()
     
