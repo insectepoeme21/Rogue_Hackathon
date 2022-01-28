@@ -17,7 +17,7 @@ def move(player, direction):
         doors.remove(new_pos)
         player.position = new_pos
     else:
-        if new_pos not in walls and new_pos not in KNIGHT_DICT.keys():
+        if new_pos not in walls and new_pos not in KNIGHT_DICT.keys() and new_pos not in tools.keys() and new_pos not in BOSS_DICT.keys():
             player.position = new_pos
         if new_pos in BOSS_DICT.keys():
             fight(player, BOSS_DICT[new_pos])
@@ -26,6 +26,11 @@ def move(player, direction):
         if new_pos in BAG_LIST:
             player.position = new_pos
             player.enrichement(BAG_LIST[new_pos])
+            del BAG_LIST[new_pos]
+        if new_pos in tools.keys():
+            player.position = new_pos
+            player.weapon = tools[new_pos]
+            del tools[new_pos]
 
 class Player:
     def __init__(self, position, health = 100, weapon = ["wood stick", 10], wealth = 0, armour = 0):
@@ -65,12 +70,14 @@ def fight(player, knight):
 
 KNIGHT_DICT={(23,18) : Knight((23,18)), (12, 15) : Knight((12, 15))}
 BOSS_DICT = {(8, 26) : Knight((8, 26), HP = 200, DMG = 20)}
-tools = {}
+tools = {(4, 11):("sword", 40), (15, 6):("axe", 20)}
+BAG_LIST = {(10, 21) : 10, (13, 20) : 20, (14, 20) : 30, (19, 20) : 10}
+
+
 walls = []
 doors = []
 paths = []
 player = Player((3, 3))
-BAG_LIST = {}
 
 pg.init()
 COTE = 20 # largeur du rectangle en pixels
@@ -161,17 +168,8 @@ while running:
 
 
     screen.fill(BLACK)
-    for x, y in walls:
-        draw_rect(screen, x, y, COTE, WHITE)
     for x in doors:
         draw_rect(screen, *x , COTE, RED)
-    for x in paths:
-        draw_rect(screen, *x, COTE, GRAY)
-    for x in KNIGHT_DICT.keys():
-        draw_rect(screen, *x, COTE, BLUE)
-    
-
-    draw_rect(screen, *player.position, COTE, GREEN)
 
     for x in KNIGHT_DICT.keys():
         screen.blit(knight, (x[0]*COTE, x[1]*COTE))
@@ -182,9 +180,38 @@ while running:
         screen.blit(wood, (i*COTE, j*COTE))
     for x in BOSS_DICT.keys():
         screen.blit(boss, (x[0]*COTE, x[1]*COTE))
+    for pos, value in tools.items():
+        if value == 'sword':
+            screen.blit(sword, (pos[0]*COTE +2, pos[1]*COTE +2))
+        elif value == 'axe':
+            screen.blit(axe, (pos[0]*COTE +2, pos[1]*COTE +2))
+    for x in BAG_LIST.keys():
+        screen.blit(coin, (x[0]*COTE +2, x[1]*COTE +2))
+
+    GOLD =  (255,215,0)
+
+    health_rect = pg.Rect(100, 31*COTE, max(2.5*player.health, 250), COTE)
+    damage_rect = pg.Rect(100 + 2.5*player.health,31*COTE, max(0, 250 - 2.5*player.health), COTE)
+    pg.draw.rect(screen, GREEN, health_rect)
+    pg.draw.rect(screen, RED, damage_rect)
+    wealth_rect = pg.Rect(150, 32*COTE, player.wealth, COTE)
+    pg.draw.rect(screen, GOLD, wealth_rect)
 
 
-    screen.blit(digger, (player.position[0]*COTE , player.position*COTE))
+    # Affichage du texte 
+    font_obj=pg.font.SysFont("Arial", 20)
+
+    coin_txt = font_obj.render(f"Wealth: {player.wealth} coins", True, GOLD) 
+    health_txt = font_obj.render(f"Healthbar:", True, GREEN)
+    txt = font_obj.render(f"Your Character:", True, WHITE)
+
+    screen.blit(coin_txt, (0, 32*COTE))
+    screen.blit(health_txt, (0,31*COTE))
+    screen.blit(txt, (0, 30*COTE - 5))
+
+    pg.display.update()
+
+    screen.blit(digger, (player.position[0]*COTE , (player.position[1]-0.5)*COTE))
 
 
 
