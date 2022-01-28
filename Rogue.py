@@ -1,5 +1,3 @@
-# v1 : pareil mais au moins on peut sortir du programme
-# avec la touche 'q', ou avec la souris en fermant la fenêtre
 
 import pygame as pg
 from random import randint
@@ -23,29 +21,75 @@ def move(player, direction):
         player.pos += direction
     if player.pos + direction in KNIGHT_POS.keys():
         fight(player, KNIGHT_POS[player.pos + direction])
+        
     if player.pos + direction in BAG_LIST:
         player.pos += direction
         player.enrichement()
     if player.pos + direction in POTION_LIST:
         player.pos += direction 
 
+    global doors
+    new_pos = (player.position[0] + direction[0],player.position[1] + direction[1])
+    if new_pos in doors:
+        doors.remove(new_pos)
+    else:
+        if new_pos not in walls:
+            player.position = new_pos
+        if new_pos in KNIGHT_DICT.keys():
+            fight(player, KNIGHT_DICT[new_pos])
+
+class Player:
+    def __init__(self, position, health = 100, weapon = ["wood stick", 10], wealth = 0, armour = 0):
+        """
+        poistion : la position du joueur exprimé paer une liste de longueur 2
+        health : la santé du joueur exprimé en pourcentage (mais peut être supérieur à 100
+        weapon : une liste avec l'arme du joueur et son dégat 
+            ex: weapon = ["sword", 40]
+        wealth : le nombre de pièce d'or du personnage
+        """
+        self.position = position 
+        self.health = health
+        self.weapon = weapon 
+        self.wealth = wealth 
+        self.armour = armour 
 
 
+    def enrichement(self, coin_bags):
+        wealth = self.wealth
+        self.wealth = wealth + coin_bags 
+ 
+
+
+
+def fight(player, knight):
+    knight.HP -= player.weapon[1]
+    if knight.HP > 0:
+        player.health += player.armour - knight.DMG
+    if player.health <= 0:
+        pg.quit()
+    if knight.HP <= 0:
+        KNIGHT_DICT.pop(knight.pos)
+        player.wealth += knight.ore
+
+KNIGHT_DICT={}
+walls = []
+doors = []
+player = Player((3, 3))
 
 pg.init()
 COTE = 20 # largeur du rectangle en pixels
 NB_CASES = 30
 screen = pg.display.set_mode((COTE*NB_CASES, COTE*NB_CASES))
 clock = pg.time.Clock()
-pace = 2
+pace = 10
 
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 BLUE = (0, 0, 255)
+GREEN = (0, 255, 0)
 
-wall = []
 
 def draw_rect(screen, x, y, size, color):
     rect = pg.Rect(x*size, y*size, size, size)
@@ -133,10 +177,26 @@ while running:
 
         if event.type == pg.QUIT:
             running = False
+        if event.type == pg.KEYDOWN:
+            if event.key == pg.K_s:
+                move(player, (0, 1))
+            if event.key == pg.K_z:
+                move(player, (0, -1))
+            if event.key == pg.K_q:
+                move(player, (-1, 0))
+            if event.key == pg.K_d:
+                    move(player, (1, 0))
+
+    for i in map:
+        room(*i)
 
 
     screen.fill(BLACK)
-    draw_rect(screen, 0, 1, COTE, WHITE)
+    for x, y in walls:
+        draw_rect(screen, x, y, COTE, WHITE)
+    for x in doors:
+        draw_rect(screen, *x , COTE, RED)
+    draw_rect(screen, *player.position, COTE, GREEN)
 
     pg.display.update()
     
