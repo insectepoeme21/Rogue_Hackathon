@@ -11,13 +11,15 @@ class Knight:
         self.wealth = Ore
 
 def move(player, direction):
-    if player.position + direction in doors:
-        doors.remove(player.position + direction)
-    if player.position + direction not in walls:
-        player.position += direction
-    if player.position + direction in KNIGHT_DICT.keys():
-        fight(player, KNIGHT_DICT[player.position + direction])
-
+    global doors
+    new_pos = (player.position[0] + direction[0],player.position[1] + direction[1])
+    if new_pos in doors:
+        doors.remove(new_pos)
+    else:
+        if new_pos not in walls:
+            player.position = new_pos
+        if new_pos in KNIGHT_DICT.keys():
+            fight(player, KNIGHT_DICT[new_pos])
 
 class Player:
     def __init__(self, position, health = 100, weapon = ["wood stick", 10], wealth = 0, armour = 0):
@@ -76,33 +78,56 @@ def draw_rect(screen, x, y, size, color):
     rect = pg.Rect(x*size, y*size, size, size)
     pg.draw.rect(screen, color, rect)
 
-def room(pt, length, width):
-    pass
+
+
+def room(pt, lenX, lenY, door):
+    for i in range(lenX):
+        walls.append((pt[0]+i, pt[1]))
+        walls.append((pt[0]+i, pt[1]+lenY-1))
+    for i in range(1, lenY-1):
+        walls.append((pt[0], pt[1]+i))
+        walls.append((pt[0]+lenX-1, pt[1]+i))
+    
+    for i in door:
+        doors.append(i)
+        walls.remove(i)
+    
+map = [[(2, 2), 9, 7, [(4, 8), (10, 6)]],
+       [(20, 6), 9, 5, [(25, 10)]],
+       [(8, 13), 8, 5, [(10, 17), (8, 15)]],
+       [(3, 24), 10, 5, [(10, 24)]],
+       [(20, 15), 8, 10, [(25, 15), (20, 20)]]]    
+
 
         
 
 running = True
 while running:
     clock.tick(pace)
-
+    
     for event in pg.event.get():
-        # chaque évênement à un type qui décrit la nature de l'évênement
-        # un type de pg.QUIT signifie que l'on a cliqué sur la "croix" de la fenêtre
         if event.type == pg.QUIT:
             running = False
-        if event.type == pg.KEYUP:
-            print(player.position)
-            move(player, (0, 1))
-        if event.type == pg.K_s:
-            move(player, (0, -1))
-        if event.type == pg.K_q:
-            move(player, (-1, 0))
-        if event.type == pg.K_d:
-            move(player, (1, 0))
+        if event.type == pg.KEYDOWN:
+            if event.key == pg.K_s:
+                move(player, (0, 1))
+            if event.key == pg.K_z:
+                move(player, (0, -1))
+            if event.key == pg.K_q:
+                move(player, (-1, 0))
+            if event.key == pg.K_d:
+                    move(player, (1, 0))
+
+    for i in map:
+        room(*i)
+
 
     screen.fill(BLACK)
-    draw_rect(screen, 0, 1, COTE, WHITE)
-    draw_rect(screen, player.position[0], player.position[1], COTE, GREEN)
+    for x, y in walls:
+        draw_rect(screen, x, y, COTE, WHITE)
+    for x in doors:
+        draw_rect(screen, *x , COTE, RED)
+    draw_rect(screen, *player.position, COTE, GREEN)
 
     pg.display.update()
     
