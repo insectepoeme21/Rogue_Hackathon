@@ -7,15 +7,16 @@ class Knight:
         self.HP = HP
         self.pos = pos
         self.DMG = DMG
-        self.wealth = Ore
+        self.ore = Ore
 
 def move(player, direction):
     global doors
     new_pos = (player.position[0] + direction[0],player.position[1] + direction[1])
     if new_pos in doors:
         doors.remove(new_pos)
+        player.position = new_pos
     else:
-        if new_pos not in walls:
+        if new_pos not in walls and new_pos not in KNIGHT_DICT.keys():
             player.position = new_pos
         if new_pos in KNIGHT_DICT.keys():
             fight(player, KNIGHT_DICT[new_pos])
@@ -50,13 +51,16 @@ def fight(player, knight):
     knight.HP -= player.weapon[1]
     if knight.HP > 0:
         player.health += player.armour - knight.DMG
+        print(f"PLayer has now {player.health} HP")
     if player.health <= 0:
         pg.quit()
     if knight.HP <= 0:
-        KNIGHT_DICT.pop(knight.pos)
         player.wealth += knight.ore
+        print(f"PLayer has now {player.wealth} Gold")
+        del KNIGHT_DICT[knight.pos]
 
-KNIGHT_DICT={(23,18) : Knight(23,18), (12, 15) : Knight(12, 15)}
+
+KNIGHT_DICT={(23,18) : Knight((23,18)), (12, 15) : Knight((12, 15)), (5, 5) : Knight((5, 5))}
 walls = []
 doors = []
 paths = []
@@ -65,7 +69,7 @@ BAG_LIST = {}
 
 pg.init()
 COTE = 20 # largeur du rectangle en pixels
-NB_CASES = 30
+NB_CASES = 33
 screen = pg.display.set_mode((COTE*NB_CASES, COTE*NB_CASES))
 clock = pg.time.Clock()
 pace = 10
@@ -119,7 +123,8 @@ for i in range(3):
 for i in range(4):
     paths += [(16+i, 8)]
 
-
+for i in map:
+    room(*i)
         
 
 running = True
@@ -139,8 +144,6 @@ while running:
             if event.key == pg.K_d:
                     move(player, (1, 0))
 
-    for i in map:
-        room(*i)
 
 
     screen.fill(BLACK)
@@ -148,11 +151,12 @@ while running:
         draw_rect(screen, x, y, COTE, WHITE)
     for x in doors:
         draw_rect(screen, *x , COTE, RED)
-    draw_rect(screen, *player.position, COTE, GREEN)
     for x in paths:
         draw_rect(screen, *x, COTE, GRAY)
     for x in KNIGHT_DICT.keys():
         draw_rect(screen, *x, COTE, BLUE)
+
+    draw_rect(screen, *player.position, COTE, GREEN)
 
     pg.display.update()
     
