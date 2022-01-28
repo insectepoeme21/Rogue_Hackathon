@@ -1,3 +1,4 @@
+
 import pygame as pg
 from random import randint
 from itertools import product
@@ -143,6 +144,8 @@ boss = pg.image.load("boss.png")
 axe = pg.image.load("axe.png")
 digger = pg.image.load("mineur.png")
 brick = pg.image.load("wall.png")
+dooor = pg.image.load("door.png")
+ladder = pg.image.load("ladder.png")
 
 for i in map:
     room(*i)
@@ -165,11 +168,9 @@ while running:
             if event.key == pg.K_d:
                     move(player, (1, 0))
 
-
-
     screen.fill(BLACK)
     for x in doors:
-        draw_rect(screen, *x , COTE, RED)
+        screen.blit(dooor, (x[0]*COTE, x[1]*COTE))
 
     for x in KNIGHT_DICT.keys():
         screen.blit(knight, (x[0]*COTE, x[1]*COTE))
@@ -187,6 +188,8 @@ while running:
             screen.blit(axe, (pos[0]*COTE +2, pos[1]*COTE +2))
     for x in BAG_LIST.keys():
         screen.blit(coin, (x[0]*COTE +2, x[1]*COTE +2))
+
+    screen.blit(ladder, (4*COTE +3, 26*COTE -3))
 
     GOLD =  (255,215,0)
 
