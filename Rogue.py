@@ -56,7 +56,7 @@ def fight(player, knight):
         KNIGHT_DICT.pop(knight.pos)
         player.wealth += knight.ore
 
-KNIGHT_DICT={}
+KNIGHT_DICT={(23,18) : Knight(23,18), (12, 15) : Knight(12, 15)}
 walls = []
 doors = []
 paths = []
@@ -151,6 +151,8 @@ while running:
     draw_rect(screen, *player.position, COTE, GREEN)
     for x in paths:
         draw_rect(screen, *x, COTE, GRAY)
+    for x in KNIGHT_DICT.keys():
+        draw_rect(screen, *x, COTE, BLUE)
 
     pg.display.update()
     
