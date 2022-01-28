@@ -59,6 +59,7 @@ def fight(player, knight):
 KNIGHT_DICT={}
 walls = []
 doors = []
+paths = []
 player = Player((3, 3))
 BAG_LIST = {}
 
@@ -75,6 +76,7 @@ BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 BLUE = (0, 0, 255)
 GREEN = (0, 255, 0)
+GRAY = (150, 150, 150)
 
 
 def draw_rect(screen, x, y, size, color):
@@ -100,6 +102,22 @@ map = [[(2, 2), 9, 7, [(4, 8), (10, 6)]],
        [(8, 13), 8, 5, [(10, 17), (8, 15)]],
        [(3, 24), 10, 5, [(10, 24)]],
        [(20, 15), 8, 10, [(25, 15), (20, 20)]]]    
+
+paths = [(4,9+i) for i in range(7)]
+for i in range(1,4):
+    paths += [(4+i, 15)]
+for i in range(6):
+    paths += [(10, 18+i)]
+for i in range(10):
+    paths += [(10+i, 20)]
+for i in range(4):
+    paths += [(25, 11+i)]
+for i in range(5):
+    paths += [(11+i, 5)]
+for i in range(3):
+    paths += [(15, 6+i)]
+for i in range(4):
+    paths += [(16+i, 8)]
 
 
         
@@ -131,6 +149,8 @@ while running:
     for x in doors:
         draw_rect(screen, *x , COTE, RED)
     draw_rect(screen, *player.position, COTE, GREEN)
+    for x in paths:
+        draw_rect(screen, *x, COTE, GRAY)
 
     pg.display.update()
     
