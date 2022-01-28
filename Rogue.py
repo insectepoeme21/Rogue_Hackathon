@@ -1,14 +1,8 @@
-# v1 : pareil mais au moins on peut sortir du programme
-# avec la touche 'q', ou avec la souris en fermant la fenêtre
 
 import pygame as pg
 from random import randint
 from itertools import product
 
-
-KNIGHT_LIST=[]
-KNIGHT_POS={}
-walls = []
 class Knight:
     def __init__(self, pos, HP=50, DMG=10, Ore = 10):
         self.HP = HP
@@ -17,62 +11,16 @@ class Knight:
         self.wealth = Ore
 
 def move(player, direction):
-    if player.position + direction not in walls and not in doors:
+    if player.position + direction in doors:
+        doors.remove(player.position + direction)
+    if player.position + direction not in walls:
         player.position += direction
-    if player.position + direction in KNIGHT_POS.keys():
-        fight(player, KNIGHT_POS[player.position + direction])
- 
-
-
-
-def fight(player, knight):
-    knight.HP -= player.weapon[1]
-    if knight.HP > 0:
-        player.health -= knight.DMG
-    if player.health < 0:
-        pg.quit()
-
-
-
-pg.init()
-COTE = 20 # largeur du rectangle en pixels
-NB_CASES = 30
-screen = pg.display.set_mode((COTE*NB_CASES, COTE*NB_CASES))
-clock = pg.time.Clock()
-pace = 2
-
-
-WHITE = (255, 255, 255)
-BLACK = (0, 0, 0)
-RED = (255, 0, 0)
-BLUE = (0, 0, 255)
-
-
-
-def draw_rect(screen, x, y, size, color):
-    rect = pg.Rect(x*size, y*size, size, size)
-    pg.draw.rect(screen, color, rect)
-
-def room(pt, length, width):
-    pass
-
-import pygame as py 
-import random as rd
-
-
-
-class game_set:
-    def __init__(self, ):
-        """
-        Attributes est un dictionaire contenant toutes les variables du jeu
-        """
-        self.player = 
-        self.Knights = 
-
+    if player.position + direction in KNIGHT_DICT.keys():
+        fight(player, KNIGHT_DICT[player.position + direction])
 
 
 class Player:
-    def __init__(self, position, health, weapon, wealth, armour):
+    def __init__(self, position, health = 100, weapon = ["wood stick", 10], wealth = 0, armour = 0):
         """
         poistion : la position du joueur exprimé paer une liste de longueur 2
         health : la santé du joueur exprimé en pourcentage (mais peut être supérieur à 100
@@ -90,40 +38,71 @@ class Player:
     def enrichement(self, coin_bags):
         wealth = self.wealth
         self.wealth = wealth + coin_bags 
+ 
+
+
+
+def fight(player, knight):
+    knight.HP -= player.weapon[1]
+    if knight.HP > 0:
+        player.health += player.armour - knight.DMG
+    if player.health <= 0:
+        pg.quit()
+    if knight.HP <= 0:
+        KNIGHT_DICT.pop(knight.pos)
+        player.wealth += knight.ore
+
+KNIGHT_DICT={}
+walls = []
+doors = []
+player = Player((3, 3))
+
+pg.init()
+COTE = 20 # largeur du rectangle en pixels
+NB_CASES = 30
+screen = pg.display.set_mode((COTE*NB_CASES, COTE*NB_CASES))
+clock = pg.time.Clock()
+pace = 10
+
+
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+RED = (255, 0, 0)
+BLUE = (0, 0, 255)
+GREEN = (0, 255, 0)
+
+
+def draw_rect(screen, x, y, size, color):
+    rect = pg.Rect(x*size, y*size, size, size)
+    pg.draw.rect(screen, color, rect)
+
+def room(pt, length, width):
+    pass
+
         
-
-
 
 running = True
 while running:
     clock.tick(pace)
-    
-    for event in pg.event.get():
-        if event.type == pg.K_z:
-            move(player, (0, 20))
-        if event.type == pg.K_s:
-            move(player, (0, -20))
-        if event.type == pg.K_q:
-            move(player, (-20, 0))
-        if event.type == pg.K_d:
-            move(player, (20, 0))
-
-
-        
-
 
     for event in pg.event.get():
         # chaque évênement à un type qui décrit la nature de l'évênement
         # un type de pg.QUIT signifie que l'on a cliqué sur la "croix" de la fenêtre
         if event.type == pg.QUIT:
             running = False
-
-
-    
-
+        if event.type == pg.KEYUP:
+            print(player.position)
+            move(player, (0, 1))
+        if event.type == pg.K_s:
+            move(player, (0, -1))
+        if event.type == pg.K_q:
+            move(player, (-1, 0))
+        if event.type == pg.K_d:
+            move(player, (1, 0))
 
     screen.fill(BLACK)
     draw_rect(screen, 0, 1, COTE, WHITE)
+    draw_rect(screen, player.position[0], player.position[1], COTE, GREEN)
 
     pg.display.update()
     
