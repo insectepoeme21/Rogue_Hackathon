@@ -19,9 +19,9 @@ def move(player, direction):
             player.position = new_pos
         if new_pos in KNIGHT_DICT.keys():
             fight(player, KNIGHT_DICT[new_pos])
-    if new_pos in BAG_LIST:
-        player.position = new_pos
-        player.enrichement(BAG_LIST[new_pos])
+        if new_pos in BAG_LIST:
+            player.position = new_pos
+            player.enrichement(BAG_LIST[new_pos])
 
 class Player:
     def __init__(self, position, health = 100, weapon = ["wood stick", 10], wealth = 0, armour = 0):
