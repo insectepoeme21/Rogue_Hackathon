@@ -6,8 +6,10 @@ from random import randint
 from itertools import product
 
 
-KNIGHT_LIST=
-KNIGHT_POS={}
+KNIGHT_LIST = {}
+KNIGHT_POS = {}
+BAG_LIST = {}
+POTION_LIST = {}
 
 class Knight:
     def __init__(self, pos, HP=50, DMG=10, Ore = 10):
@@ -21,6 +23,11 @@ def move(player, direction):
         player.pos += direction
     if player.pos + direction in KNIGHT_POS.keys():
         fight(player, KNIGHT_POS[player.pos + direction])
+    if player.pos + direction in BAG_LIST:
+        player.pos += direction
+        player.enrichement()
+    if player.pos + direction in POTION_LIST:
+        player.pos += direction 
 
 
 
@@ -44,44 +51,63 @@ def draw_rect(screen, x, y, size, color):
     rect = pg.Rect(x*size, y*size, size, size)
     pg.draw.rect(screen, color, rect)
 
-def room(pt, length, width):
-    pass
+def room(pt, lenX, lenY, door):
+    for i in range(lenX):
+        walls.append((pt[0]+i, pt[1]))
+        walls.append((pt[0]+i, pt[1]+lenY-1))
+    for i in range(1, lenY-1):
+        walls.append((pt[0], pt[1]+i))
+        walls.append((pt[0]+lenX-1, pt[1]+i))
+    
+    for i in door:
+        doors.append(i)
+        walls.remove(i)
+    
+map = [[(2, 2), 9, 7, [(4, 8), (10, 6)]],
+       [(20, 6), 9, 5, [(25, 10)]],
+       [(8, 13), 8, 5, [(10, 17), (8, 15)]],
+       [(3, 24), 10, 5, [(10, 24)]],
+       [(20, 15), 8, 10, [(25, 15), (20, 20)]]]    
 
-import pygame as py 
-import random as rd
-
-
-
-class game_set:
-    def __init__(self, ):
-        """
-        Attributes est un dictionaire contenant toutes les variables du jeu
-        """
-        self.player = 
-        self.Knights = 
 
 
 
 class Player:
-    def __init__(self, position, health, weapon, wealth, armour):
+    def __init__(self, position, health, weapon, wealth, armour, weapon_list, potion_list):
         """
         poistion : la position du joueur exprimé paer une liste de longueur 2
         health : la santé du joueur exprimé en pourcentage (mais peut être supérieur à 100
         weapon : une liste avec l'arme du joueur et son dégat 
             ex: weapon = ["sword", 40]
         wealth : le nombre de pièce d'or du personnage
+        potion_list : une liste des potions du joueur 
+            ex : potion = ["health", 50]
         """
         self.position = position 
         self.health = health
         self.weapon = weapon 
         self.wealth = wealth 
         self.armour = armour 
-
+        self.weapon_list = weapon_list 
+        self.potion_list = potion_list
 
     def enrichement(self, coin_bags):
         wealth = self.wealth
         self.wealth = wealth + coin_bags 
+    
+    def use_potion(self):
+        potions = self.potion_list 
+        potion = potions.pop()
+        if potion[0] == 'health':
+            self.health += potion[1]
+        # to be continued 
+
+        self.potion_list = potions
+
+
+
         
+
 
 
 
@@ -98,19 +124,15 @@ while running:
             move(player, (-20, 0))
         if event.type == pg.K_d:
             move(player, (20, 0))
-
-
         
+        if event.type = pg.K_m:
+            player.use_potion()
 
 
-    for event in pg.event.get():
-        # chaque évênement à un type qui décrit la nature de l'évênement
-        # un type de pg.QUIT signifie que l'on a cliqué sur la "croix" de la fenêtre
+
+
         if event.type == pg.QUIT:
             running = False
-
-
-    
 
 
     screen.fill(BLACK)
