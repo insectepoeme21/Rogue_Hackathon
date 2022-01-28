@@ -6,9 +6,9 @@ from random import randint
 from itertools import product
 
 
-KNIGHT_LIST=
+KNIGHT_LIST=[]
 KNIGHT_POS={}
-
+walls = []
 class Knight:
     def __init__(self, pos, HP=50, DMG=10, Ore = 10):
         self.HP = HP
@@ -17,11 +17,20 @@ class Knight:
         self.wealth = Ore
 
 def move(player, direction):
-    if player.pos + direction not in wall:
-        player.pos += direction
-    if player.pos + direction in KNIGHT_POS.keys():
-        fight(player, KNIGHT_POS[player.pos + direction])
+    if player.position + direction not in walls and not in doors:
+        player.position += direction
+    if player.position + direction in KNIGHT_POS.keys():
+        fight(player, KNIGHT_POS[player.position + direction])
+ 
 
+
+
+def fight(player, knight):
+    knight.HP -= player.weapon[1]
+    if knight.HP > 0:
+        player.health -= knight.DMG
+    if player.health < 0:
+        pg.quit()
 
 
 
@@ -38,7 +47,7 @@ BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 BLUE = (0, 0, 255)
 
-wall = []
+
 
 def draw_rect(screen, x, y, size, color):
     rect = pg.Rect(x*size, y*size, size, size)
