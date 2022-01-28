@@ -17,6 +17,8 @@ def move(player, direction):
     if new_pos in doors:
         doors.remove(new_pos)
         player.position = new_pos
+        pg.mixer.music.load("door.mp3")
+        pg.mixer.music.play()
     else:
         if new_pos not in walls and new_pos not in KNIGHT_DICT.keys() and new_pos not in tools.keys() and new_pos not in BOSS_DICT.keys():
             player.position = new_pos
@@ -28,7 +30,11 @@ def move(player, direction):
             player.position = new_pos
             player.enrichement(BAG_LIST[new_pos])
             del BAG_LIST[new_pos]
+            pg.mixer.music.load("coin.mp3")
+            pg.mixer.music.play()
         if new_pos in tools.keys():
+            pg.mixer.music.load("sword.mp3")
+            pg.mixer.music.play()
             player.position = new_pos
             player.weapon = tools[new_pos]
             del tools[new_pos]
@@ -57,6 +63,8 @@ class Player:
 
 
 def fight(player, knight):
+    pg.mixer.music.load("grrr.mp3")
+    pg.mixer.music.play()
     knight.HP -= player.weapon[1]
     if knight.HP > 0:
         player.health += player.armour - knight.DMG
@@ -72,7 +80,7 @@ def fight(player, knight):
 KNIGHT_DICT={(23,18) : Knight((23,18)), (12, 15) : Knight((12, 15))}
 BOSS_DICT = {(8, 26) : Knight((8, 26), HP = 200, DMG = 20)}
 tools = {(4, 11):("sword", 40), (15, 6):("axe", 20)}
-BAG_LIST = {(10, 21) : 10, (13, 20) : 20, (14, 20) : 30, (19, 20) : 10}
+BAG_LIST = {(10, 21) : 10, (13, 20) : 20, (14, 20) : 30, (19, 20) : 10, (11, 5) : 15}
 
 
 walls = []
@@ -138,7 +146,7 @@ for i in range(4):
 
 sword = pg.image.load("sword.png")
 knight = pg.image.load("knight.png")
-coin = pg.image.load("coin.png")
+coin = pg.image.load("dollar-coin.png")
 wood = pg.image.load("wood.png")
 boss = pg.image.load("boss.png")
 axe = pg.image.load("axe.png")
@@ -167,6 +175,10 @@ while running:
                 move(player, (-1, 0))
             if event.key == pg.K_d:
                     move(player, (1, 0))
+            if player.position == (4, 26) and event.key == pg.K_z:
+                pg.mixer.music.load("victory.mp3")
+                pg.mixer.music.play()
+
 
     screen.fill(BLACK)
     for x in doors:
@@ -182,12 +194,13 @@ while running:
     for x in BOSS_DICT.keys():
         screen.blit(boss, (x[0]*COTE, x[1]*COTE))
     for pos, value in tools.items():
-        if value == 'sword':
+        if value[0] == "sword":
             screen.blit(sword, (pos[0]*COTE +2, pos[1]*COTE +2))
-        elif value == 'axe':
+        elif value[0] == "axe":
             screen.blit(axe, (pos[0]*COTE +2, pos[1]*COTE +2))
     for x in BAG_LIST.keys():
         screen.blit(coin, (x[0]*COTE +2, x[1]*COTE +2))
+    
 
     screen.blit(ladder, (4*COTE +3, 26*COTE -3))
 
