@@ -1,13 +1,6 @@
-
 import pygame as pg
 from random import randint
 from itertools import product
-
-
-KNIGHT_LIST = {}
-KNIGHT_POS = {}
-BAG_LIST = {}
-POTION_LIST = {}
 
 class Knight:
     def __init__(self, pos, HP=50, DMG=10, Ore = 10):
@@ -17,17 +10,6 @@ class Knight:
         self.wealth = Ore
 
 def move(player, direction):
-    if player.pos + direction not in wall:
-        player.pos += direction
-    if player.pos + direction in KNIGHT_POS.keys():
-        fight(player, KNIGHT_POS[player.pos + direction])
-        
-    if player.pos + direction in BAG_LIST:
-        player.pos += direction
-        player.enrichement()
-    if player.pos + direction in POTION_LIST:
-        player.pos += direction 
-
     global doors
     new_pos = (player.position[0] + direction[0],player.position[1] + direction[1])
     if new_pos in doors:
@@ -37,6 +19,9 @@ def move(player, direction):
             player.position = new_pos
         if new_pos in KNIGHT_DICT.keys():
             fight(player, KNIGHT_DICT[new_pos])
+    if new_pos in BAG_LIST:
+        player.position = new_pos
+        player.enrichement(BAG_LIST[new_pos])
 
 class Player:
     def __init__(self, position, health = 100, weapon = ["wood stick", 10], wealth = 0, armour = 0):
@@ -75,6 +60,7 @@ KNIGHT_DICT={}
 walls = []
 doors = []
 player = Player((3, 3))
+BAG_LIST = {}
 
 pg.init()
 COTE = 20 # largeur du rectangle en pixels
@@ -95,6 +81,8 @@ def draw_rect(screen, x, y, size, color):
     rect = pg.Rect(x*size, y*size, size, size)
     pg.draw.rect(screen, color, rect)
 
+
+
 def room(pt, lenX, lenY, door):
     for i in range(lenX):
         walls.append((pt[0]+i, pt[1]))
@@ -114,67 +102,13 @@ map = [[(2, 2), 9, 7, [(4, 8), (10, 6)]],
        [(20, 15), 8, 10, [(25, 15), (20, 20)]]]    
 
 
-
-
-class Player:
-    def __init__(self, position, health, weapon, wealth, armour, weapon_list, potion_list):
-        """
-        poistion : la position du joueur exprimé paer une liste de longueur 2
-        health : la santé du joueur exprimé en pourcentage (mais peut être supérieur à 100
-        weapon : une liste avec l'arme du joueur et son dégat 
-            ex: weapon = ["sword", 40]
-        wealth : le nombre de pièce d'or du personnage
-        potion_list : une liste des potions du joueur 
-            ex : potion = ["health", 50]
-        """
-        self.position = position 
-        self.health = health
-        self.weapon = weapon 
-        self.wealth = wealth 
-        self.armour = armour 
-        self.weapon_list = weapon_list 
-        self.potion_list = potion_list
-
-    def enrichement(self, coin_bags):
-        wealth = self.wealth
-        self.wealth = wealth + coin_bags 
-    
-    def use_potion(self):
-        potions = self.potion_list 
-        potion = potions.pop()
-        if potion[0] == 'health':
-            self.health += potion[1]
-        # to be continued 
-
-        self.potion_list = potions
-
-
-
         
-
-
-
 
 running = True
 while running:
     clock.tick(pace)
     
     for event in pg.event.get():
-        if event.type == pg.K_z:
-            move(player, (0, 20))
-        if event.type == pg.K_s:
-            move(player, (0, -20))
-        if event.type == pg.K_q:
-            move(player, (-20, 0))
-        if event.type == pg.K_d:
-            move(player, (20, 0))
-        
-        if event.type = pg.K_m:
-            player.use_potion()
-
-
-
-
         if event.type == pg.QUIT:
             running = False
         if event.type == pg.KEYDOWN:
