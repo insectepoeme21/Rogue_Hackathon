@@ -87,12 +87,14 @@ for i in range(4):
 
 sword = pg.image.load("sword.png")
 knight = pg.image.load("knight.png")
-coin = pg.image.load("coin.png")
+coin = pg.image.load("dollar-coin.png")
 wood = pg.image.load("wood.png")
 boss = pg.image.load("boss.png")
 axe = pg.image.load("axe.png")
 digger = pg.image.load("mineur.png")
 brick = pg.image.load("wall.png")
+dooor = pg.image.load("door.png")
+ladder = pg.image.load("ladder.png")
 
 for i in map:
     room(*i)
@@ -130,10 +132,8 @@ while running:
     screen.fill(BLACK)
     for x, y in walls:
         draw_rect(screen, x, y, COTE, WHITE)
-    for x in doors:
-        draw_rect(screen, *x , COTE, RED)
-    """for x in paths:
-        draw_rect(screen, *x, COTE, GRAY)"""
+    
+    
 
     screen.blit(knight, (23*COTE, 8*COTE))
     screen.blit(knight, (12*COTE, 15*COTE))
@@ -149,8 +149,11 @@ while running:
     screen.blit(coin, (paths[20][0]*COTE +2, paths[20][1]*COTE +2))
     screen.blit(coin, (paths[21][0]*COTE +2, paths[21][1]*COTE +2))
     screen.blit(coin, (paths[19][0]*COTE +2, paths[19][1]*COTE +2))
+    screen.blit(ladder, (4*COTE +3, 26*COTE -3))
+    for i, j in doors:
+        screen.blit(dooor, (i*COTE, j*COTE))
 
-    screen.blit(digger, (paths[17][0]*COTE , (paths[17][1]-0.5)*COTE))
+    screen.blit(digger, (paths[17][0]*COTE , paths[17][0]*COTE))
 
     
 
