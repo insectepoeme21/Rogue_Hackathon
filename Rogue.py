@@ -215,7 +215,7 @@ while running:
         screen.blit(health_txt, (0,31*COTE))
         screen.blit(txt, (0, 30*COTE - 5))
 
-        pg.display.update()
+
 
         screen.blit(digger, (player.position[0]*COTE , (player.position[1]-0.5)*COTE))
 
@@ -223,30 +223,29 @@ while running:
             if event.type == pg.QUIT:
                 running = False
             if event.type == pg.KEYDOWN:
-                if event.key == pg.K_s:
+                if event.key == pg.K_DOWN:
                     move(player, (0, 1))
-                if event.key == pg.K_z:
+                if event.key == pg.K_UP:
                     move(player, (0, -1))
-                if event.key == pg.K_q:
+                if event.key == pg.K_LEFT:
                     move(player, (-1, 0))
-                if event.key == pg.K_d:
+                if event.key == pg.K_RIGHT:
                         move(player, (1, 0))
-                if player.position == (4, 26) and event.key == pg.K_z:
+                if player.position == (4, 26) and event.key == pg.K_DOWN:
                     pg.mixer.music.load("victory.mp3")
                     pg.mixer.music.play()
                     VICTORY = True
             
     if VICTORY:
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
+                running = False
         screen.blit(cup, (180, 200))
         font_obj=pg.font.SysFont("Bauhaus 93", 40)
         txt = font_obj.render("VICTORY", True, GOLD)
         screen.blit(txt, (13*COTE, 24*COTE))
-
-
-
-
+        pg.display.update()
 
     pg.display.update()
     
-
 pg.quit()
